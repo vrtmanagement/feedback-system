@@ -179,7 +179,7 @@ const Page = () => {
                                 >
                                     {profilePicture ? (
                                         <>
-                                            <img src={profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                                            <img src={profilePicture} alt="Profile" className="w-full h-full object-contain p-2" />
                                             {/* Tooltip */}
                                             <div className="absolute inset-0 bg-black/0 hover:bg-black/30 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
                                                 <span className="text-white text-sm font-medium px-3 py-2 bg-black/70 rounded-md">
@@ -235,7 +235,7 @@ const Page = () => {
                                             type="button"
                                             onClick={handleRemoveImage}
                                             disabled={uploadingImage}
-                                            className="px-6 py-2.5 text-black hover:text-red-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="px-6 py-2.5 text-black hover:text-red-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                         >
                                             Remove
                                         </button>

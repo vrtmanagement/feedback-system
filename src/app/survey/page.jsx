@@ -327,7 +327,7 @@ const Page = () => {
           <div className="flex justify-end pt-10">
             <button
               type="submit"
-              className="px-8 md:px-12 py-4 md:py-5 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-all font-semibold shadow-lg hover:shadow-xl disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none flex items-center gap-2 text-base md:text-lg"
+              className="px-12 py-5 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-all font-semibold shadow-lg hover:shadow-xl disabled:bg-white disabled:cursor-not-allowed disabled:shadow-none disabled:text-red-600 disabled:border-3 disabled:border-red-600 flex items-center gap-2 text-lg"
               disabled={answeredCount < questions.length - 1 || loading}
             >
               {loading ? (
