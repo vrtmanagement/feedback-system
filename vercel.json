@@ -1,0 +1,9 @@
+{
+    "crons": [
+      {
+        "path": "/api/cron/sendEmail",
+        "schedule": "*/5 * * * *"
+      }
+    ]
+  }
+  
