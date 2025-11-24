@@ -92,10 +92,6 @@ const SurveySchema = new mongoose.Schema({
     type: [ReferralSchema],
     default: []
   },
-  emailSent: {
-    type: Boolean,
-    default: false,
-  },
   // Metadata
   completedAt: {
     type: Date,

@@ -1,6 +1,7 @@
 import connectDB from '@/lib/db'
 import Survey from '@/models/Survey'
 import { NextResponse } from 'next/server'
+import { sendThankYouEmail } from '@/lib/emailService'
 
 export async function POST(request) {
   try {
@@ -58,6 +59,17 @@ export async function POST(request) {
       console.log(`Survey updated successfully for user: ${savedSurvey.email}`)
       console.log(`New questions count: ${savedSurvey.questionsAndAnswers.length}`)
       console.log(`Status changed from 'draft' to 'submitted'`)
+      
+      // Send thank you email asynchronously (non-blocking)
+      sendThankYouEmail(savedSurvey).then(result => {
+        if (result.success) {
+          console.log(`📧 Email sent successfully to ${savedSurvey.email}`)
+        } else {
+          console.error(`📧 Email failed for ${savedSurvey.email}:`, result.error)
+        }
+      }).catch(error => {
+        console.error(`📧 Email error for ${savedSurvey.email}:`, error)
+      })
       
       return NextResponse.json(
         { 
