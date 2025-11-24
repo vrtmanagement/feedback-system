@@ -10,8 +10,8 @@ function getTransport() {
         transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: "yashs.vrt@gmail.com",
-                pass: "kuyd itkz vjmm rmby" 
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS 
             }
         })
     }
@@ -53,7 +53,7 @@ export async function GET(request) {
             try {
                 // send email to survey owner
                 const info = await emailTransporter.sendMail({
-                    from: 'yashs.vrt@gmail.com',
+                    from: process.env.EMAIL_USER,
                     to: survey.email,
                     subject: 'Thank You for Your Feedback! 🎉',
                     html: generateEmailTemplate(survey),
