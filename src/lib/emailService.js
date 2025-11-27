@@ -3,21 +3,21 @@ import nodemailer from "nodemailer";
 let transporter = null;
 
 function getTransporter() {
-    if (!transporter) {
-        transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS,
-            }
-        });
-    }
-    return transporter;
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      }
+    });
+  }
+  return transporter;
 }
 
 // HTML email template
 function generateEmailTemplate(survey) {
-    return `
+  return `
       <!DOCTYPE html>
       <html>
       <head>
@@ -192,7 +192,7 @@ function generateEmailTemplate(survey) {
         <div class="email-wrapper">
           <div class="container">
             <div class="logo-section">
-              <img src="https://${process.env.VERCEL_URL || 'vrt-feedback.vercel.app'}/asset/logo.png" alt="VRT Management Group Logo" />
+              <img src="https://vrt-feedback.vercel.app/asset/logo.png" alt="VRT Management Group Logo" />
             </div>
             <div class="header">
               <h1>Thank You for Your Feedback!<span class="emoji">🎉</span></h1>
@@ -205,9 +205,10 @@ function generateEmailTemplate(survey) {
               <div class="details-box">
                 <p>📋 Survey Submission Summary</p>
                 <ul>
-                  <li><strong>Submitted:</strong> ${new Date(survey.submittedAt).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</li>
+                  <li><strong>Submitted:</strong> ${new Date(survey.submittedAt).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</li>
                   <li><strong>Company:</strong> ${survey.company}</li>
                   <li><strong>Questions Answered:</strong> ${survey.questionsAndAnswers.length}</li>
+                  <li><strong>People Referred:</strong> ${survey.referrals?.length || 0}</li>
                 </ul>
               </div>
               
@@ -230,7 +231,7 @@ function generateEmailTemplate(survey) {
 
 // Plain text fallback template
 function generateTextTemplate(survey) {
-    return `
+  return `
 Thank You for Your Feedback!
 
 Hi ${survey.fullName},
@@ -238,9 +239,10 @@ Hi ${survey.fullName},
 Thank you for taking the time to complete our survey! Your feedback is invaluable to us and helps us improve our services.
 
 Survey Details:
-- Submitted: ${new Date(survey.submittedAt).toLocaleString()}
+- Submitted: ${new Date(survey.submittedAt).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
 - Company: ${survey.company}
 - Questions Answered: ${survey.questionsAndAnswers.length}
+- People Referred: ${survey.referrals?.length || 0}
 
 We truly appreciate your participation and will carefully review your responses. Your insights help us serve you better.
 
@@ -261,30 +263,30 @@ This email was sent because you completed a survey on our platform.
  * @returns {Promise<Object>} - Email sending result
  */
 export async function sendThankYouEmail(survey) {
-    try {
-        const emailTransporter = getTransporter();
-        
-        const info = await emailTransporter.sendMail({
-            from: `"VRT Management Group" <${process.env.EMAIL_USER}>`,
-            to: survey.email,
-            subject: 'Thank You for Completing the EGA Program Survey! 🎉',
-            html: generateEmailTemplate(survey),
-            text: generateTextTemplate(survey)
-        });
+  try {
+    const emailTransporter = getTransporter();
 
-        console.log(`✅ Thank you email sent to ${survey.email}`);
-        console.log(`   Message ID: ${info.messageId}`);
-        
-        return {
-            success: true,
-            messageId: info.messageId
-        };
-    } catch (error) {
-        console.error(`❌ Failed to send email to ${survey.email}:`, error);
-        return {
-            success: false,
-            error: error.message
-        };
-    }
+    const info = await emailTransporter.sendMail({
+      from: `"VRT Management Group" <${process.env.EMAIL_USER}>`,
+      to: survey.email,
+      subject: 'Thank You for Completing the EGA Program Survey! 🎉',
+      html: generateEmailTemplate(survey),
+      text: generateTextTemplate(survey)
+    });
+
+    console.log(`✅ Thank you email sent to ${survey.email}`);
+    console.log(`   Message ID: ${info.messageId}`);
+
+    return {
+      success: true,
+      messageId: info.messageId
+    };
+  } catch (error) {
+    console.error(`❌ Failed to send email to ${survey.email}:`, error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
 }
 
