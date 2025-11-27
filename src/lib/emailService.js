@@ -24,94 +24,203 @@ function generateEmailTemplate(survey) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
           body { 
-            font-family: Arial, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6; 
             color: #333; 
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #f5f5f5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+          .email-wrapper {
+            width: 100%;
+            padding: 20px 0;
+            background-color: #f5f5f5;
           }
           .container { 
             max-width: 600px; 
-            margin: 20px auto; 
-            background: white;
-            border-radius: 10px;
+            margin: 0 auto; 
+            background: #ffffff;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+          }
+          .logo-section {
+            background: white;
+            padding: 40px 30px 30px;
+            text-align: center;
+          }
+          .logo-section img {
+            max-width: 200px;
+            height: auto;
+            display: inline-block;
           }
           .header { 
-            background: #dc2626; 
-            color: white; 
-            padding: 40px 30px; 
+            background: white;
+            color: #dc2626; 
+            padding: 30px 30px 35px; 
             text-align: center;
+            border-bottom: 2px solid #f3f4f6;
           }
           .header h1 {
             margin: 0;
             font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #dc2626;
+          }
+          .emoji {
+            display: inline-block;
+            font-size: 32px;
+            margin-left: 8px;
           }
           .content { 
-            padding: 40px 30px;
+            padding: 40px 40px 35px;
             background: white;
           }
+          .greeting {
+            font-size: 18px;
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-weight: 600;
+          }
           .content p {
-            margin: 15px 0;
+            margin: 16px 0;
+            color: #4b5563;
+            font-size: 15px;
+            line-height: 1.7;
           }
           .details-box {
-            background: #f9f9f9;
-            border-left: 4px solid #dc2626;
-            padding: 20px;
-            margin: 20px 0;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-left: 5px solid #dc2626;
+            padding: 25px;
+            margin: 28px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.08);
+          }
+          .details-box p {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #dc2626;
           }
           .details-box ul {
-            margin: 10px 0;
-            padding-left: 20px;
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
           }
           .details-box li {
-            margin: 8px 0;
+            margin: 12px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #374151;
+            font-size: 14px;
+          }
+          .details-box li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #dc2626;
+            font-weight: bold;
+            font-size: 16px;
+          }
+          .details-box li strong {
+            color: #1f2937;
+            font-weight: 600;
+          }
+          .signature {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 2px solid #f3f4f6;
+          }
+          .signature p {
+            margin: 5px 0;
+            color: #6b7280;
+          }
+          .signature strong {
+            color: #dc2626;
+            font-size: 16px;
+            font-weight: 700;
           }
           .footer { 
             text-align: center; 
-            padding: 20px;
-            background: #f9f9f9;
-            color: #666; 
-            font-size: 12px;
-            border-top: 1px solid #eee;
+            padding: 30px 30px;
+            background: linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%);
+            color: #6b7280; 
+            font-size: 13px;
+            border-top: 1px solid #e5e7eb;
           }
-          .emoji {
-            font-size: 24px;
+          .footer-logo {
+            margin-bottom: 15px;
+          }
+          .footer p {
+            margin: 8px 0;
+            line-height: 1.5;
+          }
+          .footer-divider {
+            width: 50px;
+            height: 2px;
+            background: #dc2626;
+            margin: 20px auto;
+            border-radius: 2px;
+          }
+          .copyright {
+            font-weight: 600;
+            color: #374151;
+          }
+          @media only screen and (max-width: 600px) {
+            .content {
+              padding: 30px 25px !important;
+            }
+            .header h1 {
+              font-size: 22px !important;
+            }
+            .logo-section img {
+              max-width: 150px !important;
+            }
           }
         </style>
       </head>
       <body>
-        <div class="container">
-          <div class="header">
-            <h1>Thank You for Your Feedback! <span class="emoji">🎉</span></h1>
-          </div>
-          <div class="content">
-            <p>Hi <strong>${survey.fullName}</strong>,</p>
-            
-            <p>Thank you for taking the time to complete our survey! Your feedback is invaluable to us and helps us improve our services.</p>
-            
-            <div class="details-box">
-              <p><strong>Survey Details:</strong></p>
-              <ul>
-                <li><strong>Submitted:</strong> ${new Date(survey.submittedAt).toLocaleString()}</li>
-                <li><strong>Company:</strong> ${survey.company}</li>
-                <li><strong>Questions Answered:</strong> ${survey.questionsAndAnswers.length}</li>
-              </ul>
+        <div class="email-wrapper">
+          <div class="container">
+            <div class="logo-section">
+              <img src="${process.env.NEXT_PUBLIC_APP_URL || 'https://your-domain.com'}/asset/logo.png" alt="VRT Management Group Logo" />
             </div>
-            
-            <p>We truly appreciate your participation and will carefully review your responses. Your insights help us serve you better.</p>
-            
-            <p>If you have any questions or additional feedback, feel free to reach out to us anytime.</p>
-            
-            <p>Best regards,<br><strong>VRT Management Group Team</strong></p>
-          </div>
-          <div class="footer">
-            <p>© ${new Date().getFullYear()} VRT Management Group, LLC. All rights reserved.</p>
-            <p style="margin-top: 10px;">This email was sent because you completed a survey on our platform.</p>
+            <div class="header">
+              <h1>Thank You for Your Feedback!<span class="emoji">🎉</span></h1>
+            </div>
+            <div class="content">
+              <p class="greeting">Hi ${survey.fullName},</p>
+              
+              <p>Thank you for taking the time to complete our survey! Your feedback is invaluable to us and helps us improve our services to better serve you and your organization.</p>
+              
+              <div class="details-box">
+                <p>📋 Survey Submission Summary</p>
+                <ul>
+                  <li><strong>Submitted:</strong> ${new Date(survey.submittedAt).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</li>
+                  <li><strong>Company:</strong> ${survey.company}</li>
+                  <li><strong>Questions Answered:</strong> ${survey.questionsAndAnswers.length}</li>
+                </ul>
+              </div>
+              
+              <p>We truly appreciate your participation in the EGA Program survey. Your honest feedback helps us understand what's working well and where we can improve.</p>
+              
+              <p>If you have any questions, additional feedback, or would like to discuss your responses further, please don't hesitate to reach out to us anytime.</p>
+              
+              <div class="signature">
+                <p>Warm regards,</p>
+                <p><strong>VRT Management Group Team</strong></p>
+                <p style="color: #9ca3af; font-size: 13px; margin-top: 10px;">Empowering Excellence Through Feedback</p>
+              </div>
+            </div>
           </div>
         </div>
       </body>
