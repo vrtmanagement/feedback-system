@@ -192,7 +192,7 @@ function generateEmailTemplate(survey) {
         <div class="email-wrapper">
           <div class="container">
             <div class="logo-section">
-              <img src="${process.env.NEXT_PUBLIC_APP_URL || 'https://your-domain.com'}/asset/logo.png" alt="VRT Management Group Logo" />
+              <img src="https://${process.env.VERCEL_URL || 'vrt-feedback.vercel.app'}/asset/logo.png" alt="VRT Management Group Logo" />
             </div>
             <div class="header">
               <h1>Thank You for Your Feedback!<span class="emoji">🎉</span></h1>
