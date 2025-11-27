@@ -158,7 +158,7 @@ export async function sendThankYouEmail(survey) {
         const info = await emailTransporter.sendMail({
             from: `"VRT Management Group" <${process.env.EMAIL_USER}>`,
             to: survey.email,
-            subject: 'Thank You for Your Feedback! 🎉',
+            subject: 'Thank You for Completing the EGA Program Survey! 🎉',
             html: generateEmailTemplate(survey),
             text: generateTextTemplate(survey)
         });

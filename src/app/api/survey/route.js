@@ -2,6 +2,7 @@ import connectDB from '@/lib/db'
 import Survey from '@/models/Survey'
 import { NextResponse } from 'next/server'
 import { sendThankYouEmail } from '@/lib/emailService'
+import { waitUntil } from '@vercel/functions'
 
 export async function POST(request) {
   try {
@@ -18,14 +19,22 @@ export async function POST(request) {
       )
     }
 
-    // Validate that all questions have required fields
-    const invalidQuestions = questionsAndAnswers.filter(q => 
-      !q.questionId || !q.question || q.answer === undefined
+    // Validate that exactly 14 questions are submitted (all mandatory)
+    if (questionsAndAnswers.length !== 14) {
+      return NextResponse.json(
+        { error: `All 14 questions are mandatory. Received ${questionsAndAnswers.length} questions.` },
+        { status: 400 }
+      )
+    }
+
+    // Validate that all questions have required fields and non-empty answers
+    const invalidQuestions = questionsAndAnswers.filter(q =>
+      !q.questionId || !q.question || q.answer === undefined || q.answer === ''
     )
-    
+
     if (invalidQuestions.length > 0) {
       return NextResponse.json(
-        { error: 'All questions must have questionId, question, and answer fields' },
+        { error: 'All questions must have questionId, question, and non-empty answer' },
         { status: 400 }
       )
     }
@@ -36,7 +45,7 @@ export async function POST(request) {
     if (surveyId) {
       survey = await Survey.findById(surveyId)
     } else if (email) {
-      survey = await Survey.findOne({ 
+      survey = await Survey.findOne({
         email: email.toLowerCase(),
         status: 'draft'
       })
@@ -48,32 +57,36 @@ export async function POST(request) {
       // that was created in the first step (user details)
       console.log(`Updating survey for user: ${survey.email}, Survey ID: ${survey._id}`)
       console.log(`Previous questions count: ${survey.questionsAndAnswers.length}`)
-      
+
       survey.questionsAndAnswers = questionsAndAnswers
       survey.status = 'submitted'
       survey.submittedAt = new Date()
       survey.completedAt = new Date()
-      
+
       const savedSurvey = await survey.save()
-      
+
       console.log(`Survey updated successfully for user: ${savedSurvey.email}`)
       console.log(`New questions count: ${savedSurvey.questionsAndAnswers.length}`)
       console.log(`Status changed from 'draft' to 'submitted'`)
-      
+
       // Send thank you email asynchronously (non-blocking)
-      sendThankYouEmail(savedSurvey).then(result => {
-        if (result.success) {
-          console.log(`📧 Email sent successfully to ${savedSurvey.email}`)
-        } else {
-          console.error(`📧 Email failed for ${savedSurvey.email}:`, result.error)
-        }
-      }).catch(error => {
-        console.error(`📧 Email error for ${savedSurvey.email}:`, error)
-      })
+      waitUntil(
+
+        sendThankYouEmail(savedSurvey).then(result => {
+          if (result.success) {
+            console.log(`📧 Email sent successfully to ${savedSurvey.email}`)
+          } else {
+            console.error(`📧 Email failed for ${savedSurvey.email}:`, result.error)
+          }
+        }).catch(error => {
+          console.error(`📧 Email error for ${savedSurvey.email}:`, error)
+        })
       
+      )
+
       return NextResponse.json(
-        { 
-          success: true, 
+        {
+          success: true,
           message: 'Survey submitted successfully',
           surveyId: savedSurvey._id,
           userEmail: savedSurvey.email,

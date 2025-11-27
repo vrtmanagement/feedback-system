@@ -5,13 +5,23 @@
 /**
  * Transform survey form data into the format expected by the database
  * @param {Object} answers - Object with question IDs as keys and answers as values
- * @param {Array} questions - Array of question objects with id, question, and optional options properties
+ * @param {Array} questions - Array of question objects with id, question, type, and optional options/scale properties
  * @returns {Array} Array of question-answer objects for database storage
  */
 export function formatSurveyData(answers, questions) {
   return questions.map(q => {
-    // Determine question type: if it has options, it's multiple-choice, otherwise it's text-input
-    const questionType = q.id === 'q10' || !q.options ? 'text-input' : 'multiple-choice'
+    // Determine question type based on the question's type property
+    let questionType = 'text-input'
+    
+    if (q.type === 'scale') {
+      questionType = 'scale'
+    } else if (q.type === 'yesno') {
+      questionType = 'yes-no'
+    } else if (q.type === 'choice') {
+      questionType = 'multiple-choice'
+    } else if (q.type === 'text') {
+      questionType = 'text-input'
+    }
     
     return {
       questionId: q.id,

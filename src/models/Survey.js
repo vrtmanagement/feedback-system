@@ -11,8 +11,8 @@ const QuestionAnswerSchema = new mongoose.Schema({
   },
   questionType: {
     type: String,
-    enum: ['multiple-choice', 'text-input'],
-    default: 'multiple-choice'
+    enum: ['scale', 'yes-no', 'multiple-choice', 'text-input'],
+    default: 'text-input'
   },
   answer: {
     type: String,
