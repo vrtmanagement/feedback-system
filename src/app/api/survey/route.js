@@ -19,22 +19,33 @@ export async function POST(request) {
       )
     }
 
-    // Validate that exactly 14 questions are submitted (all mandatory)
-    if (questionsAndAnswers.length !== 14) {
+    // Validate that 14-15 questions are submitted (q15 is optional)
+    if (questionsAndAnswers.length < 14 || questionsAndAnswers.length > 15) {
       return NextResponse.json(
-        { error: `All 14 questions are mandatory. Received ${questionsAndAnswers.length} questions.` },
+        { error: `Expected 14-15 questions. Received ${questionsAndAnswers.length} questions.` },
         { status: 400 }
       )
     }
 
-    // Validate that all questions have required fields and non-empty answers
-    const invalidQuestions = questionsAndAnswers.filter(q =>
+    // Validate that first 14 questions (q1-q14) have required fields and non-empty answers
+    // q15 is optional and can be empty
+    const requiredQuestions = questionsAndAnswers.filter(q => q.questionId !== 'q15')
+    const invalidQuestions = requiredQuestions.filter(q =>
       !q.questionId || !q.question || q.answer === undefined || q.answer === ''
     )
 
     if (invalidQuestions.length > 0) {
       return NextResponse.json(
-        { error: 'All questions must have questionId, question, and non-empty answer' },
+        { error: 'All required questions (q1-q14) must have questionId, question, and non-empty answer' },
+        { status: 400 }
+      )
+    }
+
+    // Validate optional question (q15) has required structure even if answer is empty
+    const optionalQuestion = questionsAndAnswers.find(q => q.questionId === 'q15')
+    if (optionalQuestion && (!optionalQuestion.questionId || !optionalQuestion.question)) {
+      return NextResponse.json(
+        { error: 'Optional question (q15) must have questionId and question fields' },
         { status: 400 }
       )
     }
@@ -55,19 +66,12 @@ export async function POST(request) {
       // Update the existing draft survey with questions and answers
       // This is the second step - questions and answers are stored in the same survey document
       // that was created in the first step (user details)
-      console.log(`Updating survey for user: ${survey.email}, Survey ID: ${survey._id}`)
-      console.log(`Previous questions count: ${survey.questionsAndAnswers.length}`)
-
       survey.questionsAndAnswers = questionsAndAnswers
       survey.status = 'submitted'
       survey.submittedAt = new Date()
       survey.completedAt = new Date()
 
       const savedSurvey = await survey.save()
-
-      console.log(`Survey updated successfully for user: ${savedSurvey.email}`)
-      console.log(`New questions count: ${savedSurvey.questionsAndAnswers.length}`)
-      console.log(`Status changed from 'draft' to 'submitted'`)
 
       // Send thank you email asynchronously (non-blocking)
       waitUntil(

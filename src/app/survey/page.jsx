@@ -22,7 +22,8 @@ const Page = () => {
     q11: '',
     q12: '',
     q13: '',
-    q14: ''
+    q14: '',
+    q15: ''
   })
   const [loading, setLoading] = useState(false)
   const [fabPosition, setFabPosition] = useState({ x: 0, y: 0 })
@@ -117,6 +118,12 @@ const Page = () => {
       question: 'Can we contact you for a short follow-up case study?',
       type: 'yesno',
       options: ['Yes', 'No']
+    },
+    {
+      id: 'q15',
+      question: 'Share anything else',
+      type: 'text',
+      optional: true
     }
   ]
 
@@ -176,7 +183,9 @@ const Page = () => {
     }
   }
 
+  const requiredQuestions = questions.filter(q => !q.optional)
   const answeredCount = Object.values(answers).filter(answer => answer !== '').length
+  const answeredRequiredCount = requiredQuestions.filter(q => answers[q.id] !== '').length
   const progress = (answeredCount / questions.length) * 100
 
   // Initialize FAB position to bottom-right on mount
@@ -266,7 +275,8 @@ const Page = () => {
                 </span>
                 <label className="flex-1 text-base font-medium text-black">
                   <span className="text-xl">
-                    {item.question} <span className="text-red-600">*</span>
+                    {item.question} {!item.optional && <span className="text-red-600">*</span>}
+                    {item.optional && <span className="text-gray-500 text-base">(Optional)</span>}
                   </span>
                 </label>
               </div>
@@ -440,19 +450,19 @@ const Page = () => {
 
           {/* Action Button */}
           <div className="space-y-4 pt-10">
-            {answeredCount < questions.length && (
+            {answeredRequiredCount < requiredQuestions.length && (
               <div className="flex items-center justify-end gap-2 text-red-600 text-sm font-medium">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
-                <span>Please answer all {questions.length - answeredCount} remaining question{questions.length - answeredCount !== 1 ? 's' : ''} to submit</span>
+                <span>Please answer all {requiredQuestions.length - answeredRequiredCount} remaining required question{requiredQuestions.length - answeredRequiredCount !== 1 ? 's' : ''} to submit</span>
               </div>
             )}
             <div className="flex justify-end">
               <button
                 type="submit"
                 className="px-12 py-5 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-all font-semibold shadow-lg hover:shadow-xl disabled:bg-white disabled:cursor-not-allowed disabled:shadow-none disabled:text-red-600 disabled:border-3 disabled:border-red-600 flex items-center gap-2 text-lg"
-                disabled={answeredCount < questions.length || loading}
+                disabled={answeredRequiredCount < requiredQuestions.length || loading}
               >
                 {loading ? (
                   <>

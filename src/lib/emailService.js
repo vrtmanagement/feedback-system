@@ -206,9 +206,8 @@ function generateEmailTemplate(survey) {
                 <p>📋 Survey Submission Summary</p>
                 <ul>
                   <li><strong>Submitted:</strong> ${new Date(survey.submittedAt).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</li>
-                  <li><strong>Company:</strong> ${survey.company}</li>
+                  <li><strong>Title:</strong> ${survey.company}</li>
                   <li><strong>Questions Answered:</strong> ${survey.questionsAndAnswers.length}</li>
-                  <li><strong>People Referred:</strong> ${survey.referrals?.length || 0}</li>
                 </ul>
               </div>
               
@@ -219,7 +218,6 @@ function generateEmailTemplate(survey) {
               <div class="signature">
                 <p>Warm regards,</p>
                 <p><strong>VRT Management Group Team</strong></p>
-                <p style="color: #9ca3af; font-size: 13px; margin-top: 10px;">Empowering Excellence Through Feedback</p>
               </div>
             </div>
           </div>
@@ -242,7 +240,6 @@ Survey Details:
 - Submitted: ${new Date(survey.submittedAt).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
 - Company: ${survey.company}
 - Questions Answered: ${survey.questionsAndAnswers.length}
-- People Referred: ${survey.referrals?.length || 0}
 
 We truly appreciate your participation and will carefully review your responses. Your insights help us serve you better.
 
